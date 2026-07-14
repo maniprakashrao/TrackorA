@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#06040A] text-zinc-100 font-sans antialiased;
+  }
+}
+
+/* Glassmorphism panel utility */
+.glass-panel {
+  background: rgba(15, 12, 27, 0.4);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(63, 63, 70, 0.3);
+}
