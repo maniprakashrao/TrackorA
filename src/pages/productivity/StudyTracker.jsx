@@ -394,7 +394,8 @@ export default function StudyTracker() {
   const currentTimeDisplaySeconds = trackerMode === 'focus' ? secondsElapsed : countdownSecondsLeft;
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto text-zinc-100 font-sans grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-7rem)] overflow-hidden select-none selection:bg-purple-500/20">
+    /* 🌟 FIXED: Added high-performance touch scroll limits container boundaries for overall wrapper alignment metrics */
+    <div className="p-0 max-w-[1600px] mx-auto text-zinc-100 font-sans grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-7rem)] overflow-y-auto lg:overflow-hidden select-none selection:bg-purple-500/20">
       
       {/* DELETE DIALOG MODAL LAYOUT OVERLAY */}
       {showDeleteModal && (
@@ -416,7 +417,7 @@ export default function StudyTracker() {
       )}
 
       {/* LEFT COLUMN PANEL */}
-      <div className="lg:col-span-4 flex flex-col gap-5 min-h-0">
+      <div className="lg:col-span-4 flex flex-col gap-5 min-h-0 overflow-hidden">
         
         {/* TIMER MODE INTERFACE */}
         <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-5 shadow-xl flex flex-col justify-between shrink-0 relative">
@@ -488,7 +489,7 @@ export default function StudyTracker() {
         </div>
 
         {/* SUBJECT SELECTION PANEL */}
-        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col flex-1 min-h-0 shadow-xl overflow-hidden text-left">
+        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col flex-1 min-h-[300px] lg:min-h-0 shadow-xl overflow-hidden text-left">
           <div className="flex justify-between items-center border-b border-zinc-900 pb-2.5 shrink-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Subject Folder Deck</span>
             <span className="text-[8px] font-mono font-bold text-zinc-600 bg-zinc-950 border border-zinc-900 px-1.5 py-0.5 rounded-md">{topics.length} Node</span>
@@ -504,6 +505,7 @@ export default function StudyTracker() {
             <button type="submit" className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"><Plus className="w-3.5 h-3.5"/></button>
           </form>
 
+          {/* 🌟 SCROLL LAYER FOR SUBJECTS ROW DECK */}
           <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
             {topics.length === 0 ? (
               <p className="text-zinc-600 text-xs italic text-center py-10">No tracking subjects created.</p>
@@ -583,14 +585,14 @@ export default function StudyTracker() {
             </div>
           </div>
 
-          <div className="h-64 w-full flex items-end justify-between pt-6 px-4 relative select-none">
+          <div className="h-64 w-full flex items-end justify-between pt-6 px-2 sm:px-4 relative overflow-x-auto select-none [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-zinc-800/40 [&::-webkit-scrollbar-thumb]:rounded-full">
             {graphMatrix.days.map((day, idx) => {
               const activeFullDayHeightPct = day.totalSeconds > 0 
                 ? (day.displayValue / graphMatrix.maxDisplayVal) * 92 
                 : 0;
 
               return (
-                <div key={idx} className="flex flex-col items-center flex-1 h-full group relative">
+                <div key={idx} className="flex flex-col items-center flex-1 min-w-[40px] sm:min-w-0 h-full group relative">
                   <div className="w-7 sm:w-10 bg-zinc-950/40 border border-zinc-900/60 rounded-t-lg h-[92%] flex flex-col-reverse overflow-hidden relative group-hover:border-zinc-700/80 transition-all shadow-inner">
                     {day.totalSeconds > 0 && (
                       <div 
@@ -645,7 +647,7 @@ export default function StudyTracker() {
         </div>
 
         {/* DETAILED LOG RECORDS VIEWPORT */}
-        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col flex-1 min-h-0 shadow-xl overflow-hidden text-left">
+        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col flex-1 min-h-[300px] lg:min-h-0 shadow-xl overflow-hidden text-left">
           <div className="flex justify-between items-center border-b border-zinc-900 pb-2.5 shrink-0 select-none">
             <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
               <Clock className="w-3.5 h-3.5 text-purple-400" /> Log Details Matrix Viewport
@@ -655,7 +657,8 @@ export default function StudyTracker() {
             </span>
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-2 pt-3 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
+          {/* 🌟 SCROLL LAYER FOR LOG METRICS VIEWPORT CONTAINER */}
+          <div className="flex-1 overflow-y-auto space-y-2 pt-3 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/85 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
             {!activeFocusSubjectObj || !activeFocusSubjectObj.study_sessions || activeFocusSubjectObj.study_sessions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-zinc-600 text-xs italic py-12 select-none">
                 No granular timer log sheets compiled inside this workspace node yet.

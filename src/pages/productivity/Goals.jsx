@@ -291,7 +291,7 @@ export default function Goals() {
   const completedCount = goals.filter(g => g.is_completed).length;
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] gap-5 max-w-[1600px] mx-auto text-zinc-100 font-sans relative selection:bg-purple-500/20 select-none">
+    <div className="flex h-[calc(100vh-8rem)] gap-5 max-w-[1600px] mx-auto text-zinc-100 font-sans relative selection:bg-purple-500/20 select-none overflow-hidden">
       
       {/* GLOBAL CONFIRMATION MODAL */}
       {showDeleteModal && (
@@ -376,7 +376,7 @@ export default function Goals() {
       </div>
 
       {/* RIGHT PANEL WORKSPACE CANVAS */}
-      <div className="flex-1 flex flex-col space-y-4 overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         
         {loading ? (
           <p className="text-xs text-purple-400/80 animate-pulse py-12 text-center">Loading objective matrices...</p>
@@ -388,7 +388,8 @@ export default function Goals() {
             const isVerificationUnlocked = currentProgressPct === 100;
 
             return (
-              <div className="w-full bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-6 shadow-2xl space-y-6 animate-fade-in overflow-y-auto max-h-full flex flex-col justify-between text-left">
+              /* 🌟 FIXED: Added responsive track scrollers inside the subtopic drilldown page section view */
+              <div className="w-full bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-6 shadow-2xl animate-fade-in overflow-y-auto h-full flex flex-col justify-between text-left [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/40">
                 
                 <div className="space-y-6">
                   <div className="flex justify-between items-center border-b border-zinc-900 pb-4">
@@ -462,7 +463,7 @@ export default function Goals() {
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center border-t border-zinc-900/60 pt-4 font-mono text-[10px] text-zinc-500 select-none mt-4">
+                <div className="flex justify-between items-center border-t border-zinc-900/60 pt-4 font-mono text-[10px] text-zinc-500 select-none mt-6">
                   <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5"/> Target Date: {activeGoalDetails.target_date}</span>
                   
                   <button
@@ -492,7 +493,8 @@ export default function Goals() {
         ) : (
           
           /* MAIN GRID DISPLAY LOG PANEL */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start overflow-y-auto pr-1 text-left">
+          /* 🌟 FIXED: Enhanced catalog deck scroller settings to allow adaptive page glide tracking on mobile viewports */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start overflow-y-auto pr-1 pb-4 h-full text-left [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/60 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/40">
             {filteredAndSortedGoals.map((goal) => {
               const percentage = getGoalProgress(goal);
               return (

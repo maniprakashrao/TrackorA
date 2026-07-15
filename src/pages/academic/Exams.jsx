@@ -239,7 +239,8 @@ export default function Exams() {
   const strokeDashoffset = circumference - (metrics.pct / 100) * circumference;
 
   return (
-    <div className="p-6 max-w-[1600px] mx-auto text-zinc-100 font-sans grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-7rem)] overflow-hidden select-none selection:bg-purple-500/20">
+    /* 🌟 UPDATED OVERFLOW PROPERTIES TO ADAPT CONTENT IN RESPONSIVE VIEWS */
+    <div className="p-0 max-w-[1600px] mx-auto text-zinc-100 font-sans grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-7rem)] overflow-y-auto lg:overflow-hidden select-none selection:bg-purple-500/20">
       
       {/* GLOBAL DELETE MODAL */}
       {showDeleteModal && (
@@ -298,7 +299,7 @@ export default function Exams() {
 
       {/* LEFT SIDE TIMELINE SLIDER SUMMARY */}
       <div className="lg:col-span-5 flex flex-col gap-5 min-h-0">
-        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col flex-1 min-h-0 shadow-xl overflow-hidden text-left">
+        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-4 flex flex-col flex-1 min-h-[300px] lg:min-h-0 shadow-xl overflow-hidden text-left">
           <div className="flex justify-between items-center border-b border-zinc-900 pb-3 shrink-0">
             <div className="flex items-center gap-2">
               <GraduationCap className="w-4 h-4 text-purple-400" />
@@ -310,6 +311,7 @@ export default function Exams() {
             <button onClick={() => setShowAddModal(true)} className="p-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all shadow"><Plus className="w-3.5 h-3.5"/></button>
           </div>
 
+          {/* 🌟 SCROLL LAYER FOR LEFT SIDE EXAM CARDS LIST */}
           <div className="flex-1 overflow-y-auto space-y-2 mt-4 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
             {loading ? (
               <p className="text-xs text-purple-400/80 animate-pulse text-center py-10 font-mono">Syncing exam registers...</p>
@@ -335,7 +337,7 @@ export default function Exams() {
                         <span className="text-[8px] font-bold uppercase font-sans tracking-wide text-zinc-500 bg-zinc-950/80 border border-zinc-900 px-1.5 py-0.5 rounded inline-block mb-1">{exam.subject}</span>
                         <h4 className="text-xs font-bold text-zinc-200 truncate">{exam.title}</h4>
                       </div>
-                      <button onClick={(e) => openDeleteModal(exam.id, e)} className="text-zinc-800 hover:text-red-400 opacity-0 group-hover:opacity-100 p-0.5 transition-opacity shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
+                      <button onClick={(e) => openDeleteModal(exam.id, e)} className="text-zinc-800 hover:text-red-400 lg:opacity-0 group-hover:opacity-100 p-0.5 transition-opacity shrink-0"><Trash2 className="w-3.5 h-3.5" /></button>
                     </div>
 
                     <div className="flex justify-between items-center border-t border-zinc-900/50 pt-2.5 mt-2 select-none">
@@ -356,7 +358,7 @@ export default function Exams() {
 
       {/* RIGHT SIDE DYNAMIC SUBTOPICS WORKSPACE */}
       <div className="lg:col-span-7 flex flex-col gap-5 min-h-0 overflow-hidden">
-        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-5 flex flex-col flex-1 min-h-0 shadow-xl overflow-hidden text-left">
+        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-5 flex flex-col flex-1 min-h-[400px] lg:min-h-0 shadow-xl overflow-hidden text-left">
           {!activeExamObj ? (
             <div className="flex flex-col items-center justify-center h-full text-zinc-600 text-xs italic select-none">
               Initialize or focus an exam milestone profile card on the left panel to configure syllabus components.
@@ -415,6 +417,7 @@ export default function Exams() {
                 </form>
 
                 {/* Interactive Checkbox List Element */}
+                {/* 🌟 SCROLL LAYER FOR DETAILED SYLLABUS SYNC LIST */}
                 <div className="flex-1 overflow-y-auto space-y-2 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
                   {(!activeExamObj.exam_subtopics || activeExamObj.exam_subtopics.length === 0) ? (
                     <p className="text-zinc-600 text-xs italic text-center py-12">No syllabus breakdown items configured yet.</p>
@@ -444,7 +447,7 @@ export default function Exams() {
                         <button
                           type="button"
                           onClick={() => handleRemoveSubtopic(subtopic.id)}
-                          className="text-zinc-800 hover:text-red-400 opacity-0 group-hover:opacity-100 p-1 transition-opacity"
+                          className="text-zinc-800 hover:text-red-400 lg:opacity-0 group-hover:opacity-100 p-1 transition-opacity"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>

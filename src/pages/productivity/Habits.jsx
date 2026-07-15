@@ -117,7 +117,7 @@ export default function Habits() {
       if (!user) return;
 
       // Inserts using your explicit column layout signatures
-      const { error } = await supabase
+      const { error = null } = await supabase
         .from('user_habits')
         .insert([
           {
@@ -312,11 +312,12 @@ export default function Habits() {
   const activeHabitsRegistry = habits;
 
   return (
-    <div className="p-0 text-zinc-100 font-sans h-[calc(100vh-8rem)] gap-5 max-w-[1600px] mx-auto relative flex overflow-hidden select-none selection:bg-purple-500/20">
+    /* 🌟 ADJUSTED CONTAINER OVERFLOW BLUEPRINTS TO ADAPT ON MOBILE VIEWS CLEANLY */
+    <div className="p-0 text-zinc-100 font-sans h-[calc(100vh-8rem)] gap-5 max-w-[1600px] mx-auto relative flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden select-none selection:bg-purple-500/20">
       
       {/* GLOBAL DELETE MODAL */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4定位 animate-fade-in">
           <div className="bg-[#0f0c1b] border border-zinc-800/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5 animate-scale-up text-left">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-red-500/10 rounded-xl text-red-400 shrink-0 border border-red-500/20">
@@ -351,7 +352,7 @@ export default function Habits() {
       )}
 
       {/* 1. LEFT PANEL: Registry Column */}
-      <div className="w-72 bg-[#0f0c1b]/50 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 flex flex-col shrink-0 shadow-xl text-left">
+      <div className="w-full lg:w-72 bg-[#0f0c1b]/50 backdrop-blur-md border border-zinc-800/80 rounded-2xl p-4 flex flex-col shrink-0 shadow-xl text-left min-h-[250px] lg:min-h-0">
         <div className="flex justify-between items-center mb-4">
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">Habits Registry</h3>
@@ -390,7 +391,8 @@ export default function Habits() {
           </form>
         )}
 
-        <div className="flex-1 overflow-y-auto space-y-1.5 pr-0.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
+        {/* 🌟 CLEARED DENSE TEXT WALLS WITH CLEAN INDEPENDENT AUTO-SCROLL */}
+        <div className="flex-1 overflow-y-auto space-y-1.5 pr-0.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
           {activeHabitsRegistry.map(h => (
             <div key={h.id} className="p-2.5 bg-zinc-900/20 border border-zinc-800/40 rounded-xl flex justify-between items-center group transition-all hover:border-zinc-800">
               <div className="truncate flex-1 pr-2">
@@ -399,7 +401,7 @@ export default function Habits() {
               </div>
               <button 
                 onClick={(e) => initiateDeleteRequest(h.id, e)}
-                className="text-zinc-600 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                className="text-zinc-600 hover:text-red-400 p-1 lg:opacity-0 group-hover:opacity-100 transition-all shrink-0"
                 title="Delete from today onwards"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -410,10 +412,10 @@ export default function Habits() {
       </div>
 
       {/* 2. RIGHT MASTER CANVAS AREA */}
-      <div className="flex-1 flex flex-col space-y-4 overflow-hidden text-left">
+      <div className="flex-1 flex flex-col space-y-4 min-h-0 overflow-hidden text-left w-full">
         
         {/* TOP ROW VIEWPORT LAYER */}
-        <div className="w-full bg-[#0b0813]/60 border border-zinc-800/60 rounded-2xl p-2.5 flex items-stretch gap-2 shrink-0 overflow-x-auto min-h-[96px] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <div className="w-full bg-[#0b0813]/60 border border-zinc-800/60 rounded-2xl p-2.5 flex items-stretch gap-2 shrink-0 overflow-x-auto min-h-[96px] [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
           {monthNames.map((monthLabel, monthIdx) => {
             const isMonthExpanded = expandedMonthIdx === monthIdx;
             const isCurrentMonthActual = todayObj.getMonth() === monthIdx;
@@ -455,7 +457,7 @@ export default function Habits() {
         </div>
 
         {/* BOTTOM ROW VIEWPORT LAYER */}
-        <div className="flex-1 flex gap-3 items-stretch bg-[#06040a]/40 border border-zinc-800/40 rounded-2xl p-3 overflow-hidden">
+        <div className="flex-1 flex gap-3 items-stretch bg-[#06040a]/40 border border-zinc-800/40 rounded-2xl p-3 overflow-x-auto [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
           {currentMonthWeeks.map((weekDaysArr, weekIdx) => {
             const isWeekExpanded = expandedWeekIdx === weekIdx;
             const hasTodayNode = weekDaysArr.some(d => d.dateStr === todayStr);
@@ -518,8 +520,8 @@ export default function Habits() {
                     </div>
                   </div>
 
-                  {/* Habit Task Rows Iterator Matrix */}
-                  <div className="flex-1 overflow-y-auto space-y-1 py-2 border-b border-zinc-900/60 pr-0.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
+                  {/* 🌟 INDEPENDENT INTERNAL SCROLL ELEMENT FOR EXPANDED MATRIX SUB-SECTIONS */}
+                  <div className="flex-1 overflow-y-auto space-y-1 py-2 border-b border-zinc-900/60 pr-0.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/40">
                     {activeWeekHabits.length === 0 ? (
                       <div className="text-center py-12 text-zinc-600 text-xs italic">No habits tracking inside this timeline scope.</div>
                     ) : (

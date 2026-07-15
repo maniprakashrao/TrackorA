@@ -82,7 +82,6 @@ export default function Calendar() {
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
-  // Fixed: Forces both the month focus and lists context viewport back to today's active date coordinates
   const handleToday = () => {
     setCurrentDate(new Date(todayObj.getFullYear(), todayObj.getMonth(), 1));
     setSelectedDate(todayStr);
@@ -95,7 +94,6 @@ export default function Calendar() {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError || !user) return;
 
-      // Query only calendar_events belonging to the logged-in user
       const { data: eventsData, error } = await supabase
         .from('calendar_events')
         .select('*')
@@ -244,7 +242,7 @@ export default function Calendar() {
       )}
 
       {/* LEFT PANEL */}
-      <div className="flex-1 flex flex-col space-y-4">
+      <div className="flex-1 flex flex-col space-y-4 min-h-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -291,7 +289,7 @@ export default function Calendar() {
           </div>
         </div>
 
-        <div className="flex-1 bg-[#0f0c1b]/20 border border-zinc-800/60 rounded-xl overflow-hidden flex flex-col relative">
+        <div className="flex-1 bg-[#0f0c1b]/20 border border-zinc-800/60 rounded-xl overflow-hidden flex flex-col relative min-h-0">
           {loading && (
             <div className="absolute inset-0 bg-[#06040A]/80 backdrop-blur-sm z-50 flex items-center justify-center text-xs text-purple-400 font-medium">
               Syncing with Supabase grid...
@@ -300,13 +298,14 @@ export default function Calendar() {
 
           {viewMode === 'Month' ? (
             <>
-              <div className="grid grid-cols-7 border-b border-zinc-800/60 bg-[#0b0813]/40 text-center py-2.5">
+              <div className="grid grid-cols-7 border-b border-zinc-800/60 bg-[#0b0813]/40 text-center py-2.5 shrink-0">
                 {daysOfWeek.map((day) => (
                   <span key={day} className="text-[10px] font-bold text-zinc-500 tracking-wider">{day}</span>
                 ))}
               </div>
 
-              <div className="grid grid-cols-7 flex-1 divide-x divide-y divide-zinc-800/40 border-l border-t border-zinc-800/40">
+              {/* 🌟 MONTH GRID CELL WRAPPER WITH CLEAN INDEPENDENT AUTO-SCROLL LAYER */}
+              <div className="grid grid-cols-7 flex-1 divide-x divide-y divide-zinc-800/40 border-l border-t border-zinc-800/40 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/65 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/40">
                 {calendarDays.map((cell, idx) => {
                   const dayEvents = events.filter(e => e.date === cell.dateStr);
                   const isToday = cell.dateStr === todayStr;
@@ -317,7 +316,7 @@ export default function Calendar() {
                     <div
                       key={idx}
                       onClick={() => handleDateClick(cell.dateStr)}
-                      className={`p-2 flex flex-col justify-between min-h-[85px] cursor-pointer transition-all duration-150 relative group ${
+                      className={`p-2 flex flex-col justify-between min-h-[90px] cursor-pointer transition-all duration-150 relative group ${
                         !cell.isCurrentMonth ? 'opacity-20 bg-zinc-950/20' : ''
                       } ${
                         isToday ? 'bg-purple-950/10' : ''
@@ -340,7 +339,6 @@ export default function Calendar() {
                           {cell.day}
                         </span>
                         
-                        {/* 🌟 LIVE DOT TYPE INDICATOR RING MARKER */}
                         {isToday && (
                           <span className="relative flex h-2 w-2 mr-1">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
@@ -349,7 +347,7 @@ export default function Calendar() {
                         )}
                       </div>
 
-                      <div className="space-y-1 mt-1 overflow-hidden w-full text-left">
+                      <div className="space-y-1 mt-2 overflow-hidden w-full text-left">
                         {dayEvents.slice(0, 2).map((ev) => (
                           <div 
                             key={ev.id} 
@@ -373,7 +371,8 @@ export default function Calendar() {
               </div>
             </>
           ) : (
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 text-left">
+            /* 🌟 MASTER SHEET RECORDS WITH COMPATIBLE HIGH-PERFORMANCE TOUCH SCROLLER */
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 text-left [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/65 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/40">
               <div className="flex justify-between items-center pb-2 border-b border-zinc-800">
                 <h3 className="text-sm font-bold text-zinc-400">Master Sheet Records</h3>
                 <span className="text-xs bg-zinc-900 px-2.5 py-1 rounded-md text-zinc-500 font-medium">
@@ -429,10 +428,10 @@ export default function Calendar() {
         </div>
       </div>
 
-      {/* RIGHT SIDE PANEL: REMOVED SUBTOPICS EXTRA LAYOUT PER INPUT SPECIFICATIONS */}
-      <div className="w-80 bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-xl p-5 flex flex-col shrink-0 overflow-y-auto text-left">
+      {/* 🌟 RIGHT SIDE ACTION CANVAS CONTROL SLABS */}
+      <div className="w-80 bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-xl p-5 flex flex-col shrink-0 overflow-y-auto text-left [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-zinc-800/40 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/30">
         {activeEventDetails ? (
-          <div className="space-y-4 flex-1 flex flex-col justify-between">
+          <div className="space-y-4 flex-1 flex flex-col justify-between h-full">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h3 className="text-sm font-black text-purple-400 truncate flex-1 pr-2">{activeEventDetails.title}</h3>
@@ -459,19 +458,19 @@ export default function Calendar() {
 
             <button 
               onClick={(e) => initiateDeleteRequest(activeEventDetails.id, e)}
-              className="w-full py-2.5 bg-red-600/10 hover:bg-red-600 border border-red-500/20 hover:border-red-600 text-red-400 hover:text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5"
+              className="w-full mt-auto py-2.5 bg-red-600/10 hover:bg-red-600 border border-red-500/20 hover:border-red-600 text-red-400 hover:text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5"
             >
               <Trash2 className="w-3.5 h-3.5" /> Delete track
             </button>
           </div>
         ) : !isAddingEvent ? (
-          <div className="space-y-4 flex-1 flex flex-col">
+          <div className="space-y-4 flex-1 flex flex-col h-full min-h-0">
             <div>
               <h3 className="text-sm font-bold text-white tracking-tight">Active Overview</h3>
               <p className="text-[11px] text-zinc-500 mt-0.5">Live tracking for {currentMonthLabel}.</p>
             </div>
             <hr className="border-zinc-800/80" />
-            <div className="space-y-3 flex-1 overflow-y-auto pr-0.5">
+            <div className="space-y-3 flex-1 overflow-y-auto pr-0.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-zinc-800/50 [&::-webkit-scrollbar-thumb]:rounded-full">
               {events.filter(e => matchesCurrentMonthView(e.date)).length === 0 ? (
                 <p className="text-xs text-zinc-600 italic py-4">No item tracks recorded for this specific month.</p>
               ) : (
@@ -489,7 +488,7 @@ export default function Calendar() {
             </div>
           </div>
         ) : (
-          <form onSubmit={handleCreateEvent} className="space-y-4 flex-1 flex flex-col justify-between">
+          <form onSubmit={handleCreateEvent} className="space-y-4 flex-1 flex flex-col justify-between h-full">
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-1.5 text-purple-400">
@@ -546,7 +545,7 @@ export default function Calendar() {
               </div>
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-zinc-800/60">
+            <div className="flex gap-2 pt-4 border-t border-zinc-800/60 mt-auto">
               <button type="button" onClick={() => setIsAddingEvent(false)} className="flex-1 bg-zinc-900 border border-zinc-800 text-zinc-400 font-medium text-xs py-2 rounded-lg">
                 Cancel
               </button>
