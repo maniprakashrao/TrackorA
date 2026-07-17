@@ -190,7 +190,7 @@ export default function Auth({ onLoginSuccess }) {
                   <label className="text-[10px] font-bold text-zinc-500 uppercase">Display Name</label>
                   <div className="relative">
                     <User className="absolute left-3 top-3 w-3.5 h-3.5 text-zinc-600" />
-                    <input type="text" required placeholder="Mani Prakash Rao" value={displayName} onChange={e => setDisplayName(e.target.value)} className="w-full bg-[#110f1c] border border-zinc-800/80 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500 transition-colors select-text" />
+                    <input type="text" required placeholder="X Y Z" value={displayName} onChange={e => setDisplayName(e.target.value)} className="w-full bg-[#110f1c] border border-zinc-800/80 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500 transition-colors select-text" />
                   </div>
                 </div>
 
@@ -198,7 +198,7 @@ export default function Auth({ onLoginSuccess }) {
                   <label className="text-[10px] font-bold text-zinc-500 uppercase">Username</label>
                   <div className="relative">
                     <span className="absolute left-3 top-2 text-xs font-mono font-bold text-zinc-600">@</span>
-                    <input type="text" required placeholder="maniprakash" value={username} onChange={e => setUsername(e.target.value.replace(/\s+/g, ''))} className="w-full bg-[#110f1c] border border-zinc-800/80 rounded-xl py-2 pl-7 pr-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500 transition-colors select-text" />
+                    <input type="text" required placeholder="xyz" value={username} onChange={e => setUsername(e.target.value.replace(/\s+/g, ''))} className="w-full bg-[#110f1c] border border-zinc-800/80 rounded-xl py-2 pl-7 pr-3 text-xs text-white placeholder:text-zinc-600 focus:outline-none focus:border-purple-500 transition-colors select-text" />
                   </div>
                 </div>
               </>
