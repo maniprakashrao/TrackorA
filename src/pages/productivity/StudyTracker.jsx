@@ -225,9 +225,24 @@ export default function StudyTracker() {
     e.preventDefault();
     if (!newTopicName.trim()) return;
 
-    // Static clean generation array index selection configurations
-    const generationColorsArray = ['#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#06b6d4'];
-    const assignedRandomColorHex = generationColorsArray[Math.floor(Math.random() * generationColorsArray.length)];
+    // Palette list for custom subject nodes
+    const palette = [
+      '#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', 
+      '#06b6d4', '#6366f1', '#84cc16', '#f97316', '#14b8a6'
+    ];
+
+    // Inspect existing colors in DB schema to prevent duplicate color assignments
+    const usedColors = new Set(topics.map(t => t.color_hex?.toLowerCase()));
+    const availableColors = palette.filter(c => !usedColors.has(c.toLowerCase()));
+
+    // Pick an unassigned distinct color, or fallback to dynamic HSL generation
+    let assignedColorHex = '';
+    if (availableColors.length > 0) {
+      assignedColorHex = availableColors[0];
+    } else {
+      const hue = (topics.length * 137.5) % 360;
+      assignedColorHex = `hsl(${Math.round(hue)}, 70%, 60%)`;
+    }
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -238,7 +253,7 @@ export default function StudyTracker() {
         .insert([
           {
             name: newTopicName.trim(),
-            color_hex: assignedRandomColorHex,
+            color_hex: assignedColorHex,
             user_id: user.id
           }
         ])
@@ -394,7 +409,6 @@ export default function StudyTracker() {
   const currentTimeDisplaySeconds = trackerMode === 'focus' ? secondsElapsed : countdownSecondsLeft;
 
   return (
-    /* 🌟 FIXED: Added high-performance touch scroll limits container boundaries for overall wrapper alignment metrics */
     <div className="p-0 max-w-[1600px] mx-auto text-zinc-100 font-sans grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-7rem)] overflow-y-auto lg:overflow-hidden select-none selection:bg-purple-500/20">
       
       {/* DELETE DIALOG MODAL LAYOUT OVERLAY */}
@@ -505,7 +519,7 @@ export default function StudyTracker() {
             <button type="submit" className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"><Plus className="w-3.5 h-3.5"/></button>
           </form>
 
-          {/* 🌟 SCROLL LAYER FOR SUBJECTS ROW DECK */}
+          {/* SCROLL LAYER FOR SUBJECTS ROW DECK */}
           <div className="flex-1 overflow-y-auto space-y-1.5 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
             {topics.length === 0 ? (
               <p className="text-zinc-600 text-xs italic text-center py-10">No tracking subjects created.</p>
@@ -551,7 +565,7 @@ export default function StudyTracker() {
       <div className="lg:col-span-8 flex flex-col gap-6 min-h-0 overflow-hidden text-left">
         
         {/* WEEKLY ALLOCATION BAR GRAPH */}
-        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-5 shadow-xl shrink-0 flex flex-col justify-between">
+        <div className="bg-[#0f0c1b]/40 backdrop-blur-md border border-zinc-800/60 rounded-2xl p-5 shadow-xl shrink-0 flex flex-col justify-between overflow-visible">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-zinc-900 pb-3 select-none">
             <div className="space-y-0.5">
               <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Weekly Performance Allocation</span>
@@ -585,7 +599,7 @@ export default function StudyTracker() {
             </div>
           </div>
 
-          <div className="h-64 w-full flex items-end justify-between pt-6 px-2 sm:px-4 relative overflow-x-auto select-none [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-zinc-800/40 [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="h-72 w-full flex items-end justify-between pt-16 pb-2 px-2 sm:px-4 relative overflow-visible select-none">
             {graphMatrix.days.map((day, idx) => {
               const activeFullDayHeightPct = day.totalSeconds > 0 
                 ? (day.displayValue / graphMatrix.maxDisplayVal) * 92 
@@ -593,16 +607,42 @@ export default function StudyTracker() {
 
               return (
                 <div key={idx} className="flex flex-col items-center flex-1 min-w-[40px] sm:min-w-0 h-full group relative">
-                  <div className="w-7 sm:w-10 bg-zinc-950/40 border border-zinc-900/60 rounded-t-lg h-[92%] flex flex-col-reverse overflow-hidden relative group-hover:border-zinc-700/80 transition-all shadow-inner">
+                  
+                  {/* BAR CONTAINER */}
+                  <div className="w-7 sm:w-10 bg-zinc-950/40 border border-zinc-900/60 rounded-t-lg h-[90%] flex flex-col-reverse overflow-visible relative group-hover:border-zinc-700/80 transition-all shadow-inner">
                     {day.totalSeconds > 0 && (
                       <div 
-                        className="w-full flex flex-col-reverse h-full"
+                        className="w-full flex flex-col-reverse relative rounded-t-md"
                         style={{ height: `${Math.max(activeFullDayHeightPct, 3)}%` }}
                       >
+                        {/* DYNAMIC HOVER TOOLTIP (Anchored to the top edge of the active colored bar segment) */}
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 bg-[#090711] border border-zinc-800 rounded-xl p-3 shadow-2xl shadow-black/90 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-[80] w-44 space-y-2 scale-90 group-hover:scale-100">
+                          <div className="flex justify-between items-center border-b border-zinc-900 pb-1.5">
+                            <span className="text-[10px] font-black uppercase text-zinc-300">{day.label} Summary</span>
+                            <span className="text-[9px] font-mono text-purple-400 font-black">{day.displayValue} {graphMatrix.unitLabel === 'Hours' ? 'h' : 'm'}</span>
+                          </div>
+                          
+                          <div className="space-y-1 max-h-24 overflow-y-auto pr-0.5">
+                            {day.segments.map((seg, sIdx) => (
+                              <div key={sIdx} className="flex items-center justify-between text-[9px] gap-2">
+                                <div className="flex items-center gap-1.5 truncate">
+                                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
+                                  <span className="text-zinc-400 truncate font-semibold">{seg.name}</span>
+                                </div>
+                                <span className="text-zinc-200 font-mono font-bold shrink-0">{formatShortTimeDisplay(seg.seconds)}</span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Pointer Triangle Arrow */}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-[1px] w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-zinc-800" />
+                        </div>
+
+                        {/* Colored Segments */}
                         {day.segments.map((seg, sIdx) => (
                           <div
                             key={sIdx}
-                            className="w-full transition-all duration-300 border-t border-black/10 first:border-none"
+                            className="w-full transition-all duration-300 border-t border-black/10 first:border-none rounded-t-sm"
                             style={{ 
                               height: `${seg.heightPct}%`, 
                               backgroundColor: seg.color 
@@ -616,30 +656,6 @@ export default function StudyTracker() {
                   <span className="text-[9px] font-mono text-zinc-600 font-bold uppercase tracking-wider mt-2 block group-hover:text-purple-400 transition-colors">
                     {day.label}
                   </span>
-
-                  {/* HOVER SUMMARY POPUP TOOLTIP */}
-                  <div className="absolute bottom-[98%] left-1/2 transform -translate-x-1/2 bg-[#090711] border border-zinc-800 rounded-xl p-3 shadow-2xl shadow-black/90 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 w-44 space-y-2 scale-90 group-hover:scale-100">
-                    <div className="flex justify-between items-center border-b border-zinc-900 pb-1.5">
-                      <span className="text-[10px] font-black uppercase text-zinc-300">{day.label} Summary</span>
-                      <span className="text-[9px] font-mono text-purple-400 font-black">{day.displayValue} {graphMatrix.unitLabel === 'Hours' ? 'h' : 'm'}</span>
-                    </div>
-                    
-                    {day.totalSeconds === 0 ? (
-                      <p className="text-[9px] text-zinc-600 italic text-center py-1">No focus logs logged.</p>
-                    ) : (
-                      <div className="space-y-1 max-h-24 overflow-y-auto pr-0.5">
-                        {day.segments.map((seg, sIdx) => (
-                          <div key={sIdx} className="flex items-center justify-between text-[9px] gap-2">
-                            <div className="flex items-center gap-1.5 truncate">
-                              <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
-                              <span className="text-zinc-400 truncate font-semibold">{seg.name}</span>
-                            </div>
-                            <span className="text-zinc-200 font-mono font-bold shrink-0">{formatShortTimeDisplay(seg.seconds)}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
                 </div>
               );
             })}
@@ -657,7 +673,7 @@ export default function StudyTracker() {
             </span>
           </div>
 
-          {/* 🌟 SCROLL LAYER FOR LOG METRICS VIEWPORT CONTAINER */}
+          {/* SCROLL LAYER FOR LOG METRICS VIEWPORT CONTAINER */}
           <div className="flex-1 overflow-y-auto space-y-2 pt-3 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/85 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/60">
             {!activeFocusSubjectObj || !activeFocusSubjectObj.study_sessions || activeFocusSubjectObj.study_sessions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-zinc-600 text-xs italic py-12 select-none">
