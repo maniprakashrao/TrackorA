@@ -28,14 +28,21 @@ export default function Habits() {
   const daysOfWeekLabels = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-  // --- 🗓️ Month-to-Week Matrix Generator ---
+  // --- 🗓️ DYNAMIC Month-to-Week Matrix Generator ---
   const getMonthWeeksMatrix = (monthIndex) => {
+    // 1. Determine first day of month and last day of month
     const firstDayIndex = new Date(currentYear, monthIndex, 1).getDay();
+    const lastDateOfMonth = new Date(currentYear, monthIndex + 1, 0).getDate();
+
+    // 2. Set seed date to Sunday of the first week
     const seedDate = new Date(currentYear, monthIndex, 1);
     seedDate.setDate(seedDate.getDate() - firstDayIndex);
 
     const weeks = [];
-    for (let w = 0; w < 4; w++) { 
+    let finishedMonth = false;
+
+    // 3. Dynamically construct weeks until we pass the last date of the target month
+    while (!finishedMonth) {
       const currentWeek = [];
       for (let d = 0; d < 7; d++) {
         const dateStr = `${seedDate.getFullYear()}-${String(seedDate.getMonth() + 1).padStart(2, '0')}-${String(seedDate.getDate()).padStart(2, '0')}`;
@@ -49,7 +56,16 @@ export default function Habits() {
         seedDate.setDate(seedDate.getDate() + 1);
       }
       weeks.push(currentWeek);
+
+      // Check if the next seed date has rolled past the current month
+      if (seedDate.getMonth() !== monthIndex && seedDate.getDate() > 1) {
+        // If seedDate is in the next month, stop generating weeks
+        if (seedDate.getFullYear() > currentYear || seedDate.getMonth() > monthIndex) {
+          finishedMonth = true;
+        }
+      }
     }
+
     return weeks;
   };
 
@@ -312,12 +328,11 @@ export default function Habits() {
   const activeHabitsRegistry = habits;
 
   return (
-    /* 🌟 ADJUSTED CONTAINER OVERFLOW BLUEPRINTS TO ADAPT ON MOBILE VIEWS CLEANLY */
     <div className="p-0 text-zinc-100 font-sans h-[calc(100vh-8rem)] gap-5 max-w-[1600px] mx-auto relative flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden select-none selection:bg-purple-500/20">
       
       {/* GLOBAL DELETE MODAL */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4定位 animate-fade-in">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-[#0f0c1b] border border-zinc-800/80 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5 animate-scale-up text-left">
             <div className="flex items-start gap-4">
               <div className="p-3 bg-red-500/10 rounded-xl text-red-400 shrink-0 border border-red-500/20">
@@ -391,7 +406,6 @@ export default function Habits() {
           </form>
         )}
 
-        {/* 🌟 CLEARED DENSE TEXT WALLS WITH CLEAN INDEPENDENT AUTO-SCROLL */}
         <div className="flex-1 overflow-y-auto space-y-1.5 pr-0.5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full">
           {activeHabitsRegistry.map(h => (
             <div key={h.id} className="p-2.5 bg-zinc-900/20 border border-zinc-800/40 rounded-xl flex justify-between items-center group transition-all hover:border-zinc-800">
@@ -520,7 +534,7 @@ export default function Habits() {
                     </div>
                   </div>
 
-                  {/* 🌟 INDEPENDENT INTERNAL SCROLL ELEMENT FOR EXPANDED MATRIX SUB-SECTIONS */}
+                  {/* INDEPENDENT INTERNAL SCROLL ELEMENT FOR EXPANDED MATRIX SUB-SECTIONS */}
                   <div className="flex-1 overflow-y-auto space-y-1 py-2 border-b border-zinc-900/60 pr-0.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-zinc-950/20 [&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-purple-600/40">
                     {activeWeekHabits.length === 0 ? (
                       <div className="text-center py-12 text-zinc-600 text-xs italic">No habits tracking inside this timeline scope.</div>
